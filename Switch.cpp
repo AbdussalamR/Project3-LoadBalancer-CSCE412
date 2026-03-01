@@ -57,15 +57,29 @@ void Switch::step() {
  * @brief Displays summary of routed jobs and final queue sizes.
  */
 void Switch::Summary() {
-    std::cout << GREEN << "Task Time Range: 5 to 55 clock cycles" << RESET << std::endl;
+    std::string report = "\n========================================\n"
+                         "         FINAL SIMULATION REPORT    \n"
+                         "========================================\n";
 
-    std::cout << BLUE << "Processing LoadBalancer Summary:" << RESET << std::endl;
-    std::cout << "Jobs Routed: " << p_count << std::endl;
-    std::cout << "Queue Final Size: " << LB_Processing->requestQueue.size() << std::endl;
+    report += "Starting Queue Size: " + std::to_string(LB_Processing->numStart + LB_Streaming->numStart) + "\n";
+    report += "Ending Queue Size:   " + std::to_string(LB_Processing->requestQueue.size() + LB_Streaming->requestQueue.size()) + "\n";
+    report += "Task Time Range:     5 to 55 clock cycles\n\n";
 
-    std::cout << RED << "Streaming LoadBalancer Summary:" << RESET << std::endl;
-    std::cout << "Jobs Routed: " << s_count << std::endl;
-    std::cout << "Queue Final Size: " << LB_Streaming->requestQueue.size() << std::endl;
+    report += "--- Processing (P) Cluster ---\n";
+    report += "Jobs Routed:         " + std::to_string(p_count) + "\n";
+    report += "Final Server Count:  " + std::to_string(LB_Processing->servers.size()) + "\n\n";
+
+    report += "--- Streaming (S) Cluster ---\n";
+    report += "Jobs Routed:         " + std::to_string(s_count) + "\n";
+    report += "Final Server Count:  " + std::to_string(LB_Streaming->servers.size()) + "\n\n";
+
+    int totalBlocked = LB_Processing->blockedCount + LB_Streaming->blockedCount;
+    report += "--- Security Status ---\n";
+    report += "Total Blocked IPs:   " + std::to_string(totalBlocked) + "\n";
+    report += "========================================\n";
+
+    std::cout << BLUE << report << RESET << std::endl;
 
 
+    LB_Processing->log(report);
 }

@@ -24,6 +24,10 @@ public:
     std::vector<WebServer> servers;         ///< List of active web servers
     std::ofstream logFile;                  ///< File stream for logging events
 
+    int numStart;       /**< Track initial queue size */
+    int blockedCount;   /**< Track Firewall rejections (Req 15) */
+    int tasksDone;      /**< Track completed tasks */
+
     /**
      * @brief Constructs a LoadBalancer with an initial number of servers.
      * @param startServers Number of servers to initialize.

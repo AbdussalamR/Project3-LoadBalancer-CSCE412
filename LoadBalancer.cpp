@@ -7,7 +7,7 @@
  * Opens log file, sets system time to 0, and creates the
  * specified number of initial web servers.
  */
-LoadBalancer::LoadBalancer(int startServers) :systemTime(0) {
+LoadBalancer::LoadBalancer(int startServers) :systemTime(0), blockedCount(0) {
     logFile.open("log.txt");
     log("LoadBalancer initialized with " + std::to_string(startServers) + " servers.");
     for (int i = 0; i < startServers; i++) {
@@ -32,6 +32,7 @@ LoadBalancer::~LoadBalancer() {
  */
 void LoadBalancer::addRequest(Request r) {
     if (isBlocked(r.ip_in)) {
+        blockedCount++;
         log("Firewall Block: Request from " + r.ip_in + " is denied.");
         return;
     }
